@@ -1775,9 +1775,9 @@ func (t *Translator) trStackUBFM(inst vm.Instruction) error {
 		t.sPushImm(0xFFFF)
 		t.emit(vm.OpSAnd)
 	default:
-		width := imms + 1
 		if imms >= immr {
 			// UBFX: (Rn >> immr) & mask
+			width := imms - immr + 1
 			t.sVload(rn)
 			t.sPushImm32(immr)
 			t.emit(vm.OpSShr)
@@ -1786,6 +1786,7 @@ func (t *Translator) trStackUBFM(inst vm.Instruction) error {
 			t.emit(vm.OpSAnd)
 		} else {
 			// UBFIZ: (Rn & mask) << shift
+			width := imms + 1
 			shift := regSize - immr
 			mask := uint64((1 << width) - 1)
 			t.sVload(rn)
